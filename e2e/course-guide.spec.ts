@@ -65,3 +65,16 @@ test("learning experience partner offers and saves a quick practice design", asy
   await page.getByRole("button", { name: "Use this design" }).click();
   await expect(page.getByText("Activity 1")).toBeVisible();
 });
+
+test("faculty can complete a represented pathway from outcome through design story", async ({ page }) => {
+  await page.goto("/"); await page.getByRole("button", { name: "Start without a document" }).click();
+  await page.getByLabel("Course title").fill("Ecology");
+  await page.getByRole("button", { name: "Outcomes", exact: true }).click();
+  await page.getByLabel("New outcome").fill("Students will analyze ecological evidence."); await page.getByRole("button", { name: "Add outcome" }).click();
+  await page.getByRole("button", { name: "Assessments", exact: true }).click();
+  await page.getByPlaceholder("Assessment title").fill("Case analysis"); await page.getByRole("button", { name: "Add assessment" }).click();
+  await page.getByRole("button", { name: "Edit & links" }).click(); await page.getByRole("checkbox").first().check(); await page.getByRole("button", { name: "Save assessment" }).click();
+  await page.getByRole("button", { name: "Learning experiences", exact: true }).click(); await page.getByRole("button", { name: "Explore" }).first().click(); await page.getByRole("button", { name: "Use this design" }).click();
+  await page.getByRole("button", { name: "Alignment", exact: true }).click(); await expect(page.getByText("Complete pathway", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Design story", exact: true }).click(); await page.getByRole("heading", { name: "Learning experiences", exact: true }).click(); await expect(page.getByText(/You added/)).toBeVisible();
+});
