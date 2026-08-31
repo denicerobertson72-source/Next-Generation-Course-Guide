@@ -1,0 +1,15 @@
+import { afterEach, describe, expect, it } from "vitest";
+import { calculateCost, estimateCost } from "@/src/lib/ai/pricing";
+import { checkAiLimits } from "@/src/lib/ai/limits";
+import type { AiUsageLedger, AiUsageRecord } from "@/src/lib/ai/usageLedger";
+
+const env = { routine: process.env.AI_ROUTINE_MODEL, input: process.env.AI_ROUTINE_INPUT_COST_PER_MILLION, output: process.env.AI_ROUTINE_OUTPUT_COST_PER_MILLION, file: process.env.AI_FILE_SEARCH_COST_PER_SEARCH, day: process.env.AI_REQUESTS_PER_USER_PER_DAY, month: process.env.AI_REQUESTS_PER_USER_PER_MONTH, userBudget: process.env.AI_USER_MONTHLY_BUDGET_USD, projectBudget: process.env.AI_PROJECT_MONTHLY_BUDGET_USD };
+const records: AiUsageRecord[] = [];
+const ledger: AiUsageLedger = { recordsFor: (key) => records.filter((record) => record.userKey === key), allRecords: () => records, record: (record) => records.push(record) };
+const record = (cost: number, time = new Date().toISOString()): AiUsageRecord => ({ timestamp: time, userKey: "local-prototype-user", feature: "sloReview", model: "routine", tier: "routine", inputTokens: 10, outputTokens: 10, fileSearchUsed: true, estimatedCost: cost, actualCalculatedCost: cost });
+afterEach(() => { Object.assign(process.env, { AI_ROUTINE_MODEL: env.routine, AI_ROUTINE_INPUT_COST_PER_MILLION: env.input, AI_ROUTINE_OUTPUT_COST_PER_MILLION: env.output, AI_FILE_SEARCH_COST_PER_SEARCH: env.file, AI_REQUESTS_PER_USER_PER_DAY: env.day, AI_REQUESTS_PER_USER_PER_MONTH: env.month, AI_USER_MONTHLY_BUDGET_USD: env.userBudget, AI_PROJECT_MONTHLY_BUDGET_USD: env.projectBudget }); records.length = 0; });
+
+describe("AI cost controls", () => {
+  it("calculates configured token and File Search costs, and returns unknown pricing when no model is set", () => { process.env.AI_ROUTINE_MODEL = "routine"; process.env.AI_ROUTINE_INPUT_COST_PER_MILLION = "2"; process.env.AI_ROUTINE_OUTPUT_COST_PER_MILLION = "4"; process.env.AI_FILE_SEARCH_COST_PER_SEARCH = "0.01"; expect(calculateCost(1_000_000, 500_000, "routine", true)).toBeCloseTo(4.01); expect(estimateCost("four chars", "routine", true)).not.toBeNull(); process.env.AI_ROUTINE_MODEL = ""; expect(calculateCost(1, 1, "routine", false)).toBeNull(); });
+  it("allows below limits and blocks daily, monthly, user-budget, and project-budget thresholds", () => { records.length = 0; process.env.AI_REQUESTS_PER_USER_PER_DAY = "1"; process.env.AI_REQUESTS_PER_USER_PER_MONTH = "3"; process.env.AI_USER_MONTHLY_BUDGET_USD = "2"; process.env.AI_PROJECT_MONTHLY_BUDGET_USD = "3"; expect(checkAiLimits(0.5, ledger).allowed).toBe(true); records.push(record(0.5)); expect(checkAiLimits(0.5, ledger).allowed).toBe(false); process.env.AI_REQUESTS_PER_USER_PER_DAY = "10"; records.push(record(0.5), record(0.5)); expect(checkAiLimits(0.1, ledger).message).toMatch(/month/i); process.env.AI_REQUESTS_PER_USER_PER_MONTH = "10"; expect(checkAiLimits(1, ledger).message).toMatch(/monthly AI allowance/i); process.env.AI_USER_MONTHLY_BUDGET_USD = "10"; expect(checkAiLimits(2, ledger).message).toMatch(/project AI budget/i); });
+});
