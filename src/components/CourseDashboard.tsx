@@ -12,7 +12,7 @@ import type { Assessment, CourseRecord, SLO } from "@/src/types/course";
 
 const uid = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
 
-export default function CourseDashboard({ course, setCourse, onContinue, onNavigate }: { course: CourseRecord; setCourse: (course: CourseRecord) => void; onContinue: (step: number) => void; onNavigate?: (section: "context" | "outcomes" | "assessments" | "activities" | "alignment" | "story") => void }) {
+export default function CourseDashboard({ course, setCourse, onContinue, onNavigate }: { course: CourseRecord; setCourse: (course: CourseRecord) => void; onContinue: (step: number) => void; onNavigate?: (section: "context" | "outcomes" | "assessments" | "activities" | "alignment" | "story" | "assignments" | "ai") => void }) {
   const [sloText, setSloText] = useState("");
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentSlo, setAssessmentSlo] = useState("");
@@ -26,17 +26,17 @@ export default function CourseDashboard({ course, setCourse, onContinue, onNavig
   const addAssessment = () => { if (!assessmentTitle.trim() || !assessmentSlo) return; const assessment: Assessment = { id: uid("assessment"), title: assessmentTitle.trim(), type: "formative", evidence: "", linkedSloIds: [assessmentSlo] }; setCourse({ ...course, assessments: [...course.assessments, assessment] }); setAssessmentTitle(""); };
   const addReflection = () => { setCourse({ ...course, reflections: [...course.reflections, { id: uid("reflection"), stage: "course-design", prompt: "What is the most important design decision you want to carry forward?", response: reflection.trim(), skipped: !reflection.trim(), createdAt: new Date().toISOString() }] }); setReflection(""); };
   return <div>
-    <div className="section-header"><div className="eyebrow gold">Course design workspace</div><h2>Design from outcomes to evidence to learning experiences</h2><p>Use this shared course context to move through backward design. Course Review and recommendations remain available as supporting information—not a report card.</p></div>
+    <div className="section-header"><div className="eyebrow gold">Course design workspace</div><h2>{course.title || "Your course design workspace"}</h2><p>Move from outcomes to evidence to learning experiences. Your source materials remain separate from the design decisions you approve here.</p></div>
     <section className="next-step" aria-labelledby="next-step-title"><div><div className="eyebrow gold">One possible next step</div><h3 id="next-step-title">{structuralNext.action}</h3><p>{structuralNext.text}</p></div><button className="primary-button" onClick={() => onNavigate ? onNavigate(structuralNext.destination) : onContinue(0)}>Continue</button></section>
     <section className="dashboard-grid" aria-label="Backward design workspace">
-      <StatusCard label="Course context" value={course.title ? "In progress" : "Needs faculty decision"} action={() => onNavigate ? onNavigate("context") : onContinue(0)} />
-      <StatusCard label="Learning outcomes" value={course.slos.length ? `${course.slos.length} outcomes` : "Not started"} action={() => onNavigate ? onNavigate("outcomes") : onContinue(1)} />
-      <StatusCard label="Assessments" value={issues.some((issue) => issue.code === "outcome-without-assessment") ? "Opportunity to connect evidence" : course.assessments.length ? `${course.assessments.length} assessments` : "Not started"} action={() => onNavigate ? onNavigate("assessments") : onContinue(2)} />
-      <StatusCard label="Active learning" value={course.activities.length ? `${course.activities.length} activities` : "Not started"} action={() => onNavigate ? onNavigate("activities") : onContinue(3)} />
+      <StatusCard label="Course context" value={course.title ? "Current design context" : "Add course context"} action={() => onNavigate ? onNavigate("context") : onContinue(0)} />
+      <StatusCard label="Learning outcomes" value={course.slos.length ? `${course.slos.length} outcome${course.slos.length === 1 ? "" : "s"}` : "Not started"} action={() => onNavigate ? onNavigate("outcomes") : onContinue(1)} />
+      <StatusCard label="Assessments" value={issues.some((issue) => issue.code === "outcome-without-assessment") ? "Connect outcome evidence" : course.assessments.length ? `${course.assessments.length} assessment${course.assessments.length === 1 ? "" : "s"}` : "Not started"} action={() => onNavigate ? onNavigate("assessments") : onContinue(2)} />
+      <StatusCard label="Learning experiences" value={course.activities.length ? `${course.activities.length} connected practice experience${course.activities.length === 1 ? "" : "s"}` : "Not started"} action={() => onNavigate ? onNavigate("activities") : onContinue(3)} />
       <StatusCard label="Alignment" value={issues.length ? `${issues.length} items to explore` : "Ready to explore"} action={() => onNavigate ? onNavigate("alignment") : onContinue(4)} />
       <StatusCard label="Design story" value={story.total ? `${story.total} decisions recorded` : "No decisions recorded yet"} action={() => onNavigate ? onNavigate("story") : onContinue(4)} />
-      <StatusCard label="Transparent design" value={course.assignments.length ? "Reviewed" : "Not yet implemented"} action={() => onContinue(4)} />
-      <StatusCard label="Intentional AI" value={course.aiDecisions.length ? "Faculty decision recorded" : "Not yet implemented"} action={() => onContinue(4)} />
+      <StatusCard label="Transparent design" value={course.assignments.length ? "Assignment workspace ready" : "Review an assignment"} action={() => onNavigate ? onNavigate("assignments") : onContinue(4)} />
+      <StatusCard label="Intentional AI" value={course.aiDecisions.length ? "Faculty decision recorded" : "Optional planning tool"} action={() => onNavigate ? onNavigate("ai") : onContinue(4)} />
     </section>
     <section className="dashboard-section"><h3>Course design intent</h3><label className="field"><span className="field-label">What should this course make possible for students?</span><textarea rows={3} value={course.designIntent} onChange={(event) => setCourse({ ...course, designIntent: event.target.value })} placeholder="An editable summary of the course's larger purpose." /></label></section>
     <section className="dashboard-section"><FacultyMaterialUpload course={course} setCourse={setCourse} scope="course" /></section>

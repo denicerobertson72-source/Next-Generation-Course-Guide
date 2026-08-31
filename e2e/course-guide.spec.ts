@@ -33,7 +33,7 @@ test("saved course persists and detailed course-design views remain reachable", 
   await expect(page.getByRole("button", { name: "Continue a course" })).toBeVisible(); await page.getByRole("button", { name: "Continue a course" }).click();
   await page.getByRole("button", { name: "Outcomes", exact: true }).click(); await expect(page.getByText("Build and review outcomes")).toBeVisible();
   await page.getByRole("button", { name: "Assessments", exact: true }).click(); await expect(page.getByText("How will students demonstrate their learning?")).toBeVisible();
-  await page.getByRole("button", { name: "Learning activities", exact: true }).click(); await expect(page.getByText("What practice will prepare students for the evidence?")).toBeVisible();
+  await page.getByRole("button", { name: "Learning experiences", exact: true }).click(); await expect(page.getByText("What practice will prepare students for the evidence?")).toBeVisible();
   await page.getByRole("button", { name: "Alignment", exact: true }).click(); await expect(page.getByText("Outcome → Practice → Evidence")).toBeVisible();
 });
 
@@ -45,7 +45,7 @@ test("outcome design partner saves a faculty-approved revision", async ({ page }
   await page.getByLabel("Editable revision").fill("Students will explain ecosystem relationships using evidence."); await page.getByRole("button", { name: "Use this revision" }).click();
   await expect(page.getByText("Students will explain ecosystem relationships using evidence.")).toBeVisible();
   await page.getByRole("button", { name: "Design story", exact: true }).click();
-  await expect(page.getByText("You have made 1 design decision.")).toBeVisible();
+  await expect(page.getByText("1 saved design decision")).toBeVisible();
 });
 
 test("assessment design partner saves an editable curated decision", async ({ page }) => {
@@ -59,7 +59,7 @@ test("assessment design partner saves an editable curated decision", async ({ pa
 
 test("learning experience partner offers and saves a quick practice design", async ({ page }) => {
   await page.goto("/"); await page.getByRole("button", { name: "Start without a document" }).click();
-  await page.getByRole("button", { name: "Learning activities", exact: true }).click();
+  await page.getByRole("button", { name: "Learning experiences", exact: true }).click();
   await expect(page.getByText("What students need to practice")).toBeVisible();
   await page.getByRole("button", { name: "Explore" }).first().click();
   await page.getByRole("button", { name: "Use this design" }).click();
