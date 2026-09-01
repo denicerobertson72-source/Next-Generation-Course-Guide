@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { OPTIONS, label } from "@/src/data/options";
 import { enrollmentToClassSize, inferActivityGoalFromSlo } from "@/src/lib/infer";
 import { recommendActivities } from "@/src/lib/recommend";
@@ -55,8 +56,16 @@ export default function CourseGuidePrototype() {
   return (
     <main className="app-shell">
       <header className="topbar">
-        <div>
-          <div className="eyebrow">NKU · CETI</div>
+        <div className="brand-block">
+          <Image
+            className="ceti-logo"
+            src="/nku-ceti-logo.png"
+            alt="Northern Kentucky University Center for Excellence in Teaching and Innovation"
+            width={2343}
+            height={453}
+            priority
+          />
+          <div className="eyebrow">Course Design Partner</div>
           <h1>Next Generation Course Guide</h1>
           <p>Design courses where outcomes, assessment, and learning work together.</p>
         </div>
