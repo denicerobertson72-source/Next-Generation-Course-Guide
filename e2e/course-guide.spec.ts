@@ -78,3 +78,10 @@ test("faculty can complete a represented pathway from outcome through design sto
   await page.getByRole("button", { name: "Alignment", exact: true }).click(); await expect(page.getByText("Complete pathway", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Design story", exact: true }).click(); await page.getByRole("heading", { name: "Learning experiences", exact: true }).click(); await expect(page.getByText(/You added/)).toBeVisible();
 });
+
+test("course review saves a developmental reflection and routes to alignment", async ({ page }) => {
+  await page.goto("/"); await page.getByRole("button", { name: "Start without a document" }).click(); await page.getByRole("button", { name: "Course review", exact: true }).click();
+  await page.getByRole("button", { name: "I’m not sure" }).first().click(); await expect(page.getByText("Questions to consider").first()).toBeVisible();
+  await page.getByRole("button", { name: "I’d like to revisit this" }).nth(1).click(); await page.getByRole("button", { name: "Explore alignment" }).click();
+  await expect(page.getByText("Outcome → Practice → Evidence")).toBeVisible();
+});

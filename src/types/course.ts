@@ -26,6 +26,7 @@ export type CourseRecord = {
   assessmentDesignDecisions?: AssessmentDesignDecision[];
   practiceTarget?: { sloId?: string; assessmentId?: string; setAt: string };
   learningExperienceDesignDecisions?: LearningExperienceDesignDecision[];
+  courseReviewReflections?: CourseReviewReflection[];
   createdAt: string;
   updatedAt: string;
 };
@@ -132,6 +133,8 @@ export type ExternalAIFeedback = { id: string; task: "course-review" | "outcomes
 export type OutcomeDesignDecision = { id: string; sloId: string; pattern: "measurable" | "higher-order" | "transfer" | "access" | "help-decide"; originalStatement: string; guidance: string; revisedStatement: string; createdAt: string; source: "curated-design-intelligence" | "faculty-edit" };
 export type AssessmentDesignDecision = { id: string; assessmentId: string; linkedSloIds: string[]; pattern: "authentic" | "checkpoints" | "visible-thinking" | "transparency" | "choice" | "peer-self" | "ai-era" | "help-decide"; selectedMoves: string[]; originalSnapshot: { title: string; description: string; type: Assessment["type"] }; designDraft: string; createdAt: string; source: "curated-design-intelligence" | "faculty-edit" };
 export type LearningExperienceDesignDecision = { id: string; sloId?: string; assessmentId?: string; practiceNeed: string; activityId: string; activityName: string; selectedApproach: string; customization: { time: string; grouping: string; feedback: string }; design: { purpose: string; studentTask: string[]; facilitation: string[]; product: string; variations: string[]; assumptions: string[] }; approvedAt: string; source: "curated-learning-experience-library" | "faculty-edit" };
+export type CourseReviewResponse = "looks-good" | "revisit" | "unsure" | "not-applicable";
+export type CourseReviewReflection = { id: string; categoryId: string; criterionId: string; response: CourseReviewResponse; notes?: string; actionId?: string; createdAt: string; source: "course-self-review-codepen" };
 export type Assumption = { what: string; why: string; where: string };
 export type SourceRecord = {
   id: string;

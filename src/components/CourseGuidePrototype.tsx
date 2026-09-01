@@ -16,6 +16,7 @@ import ActivityPackageStudio from "@/src/components/ActivityPackageStudio";
 import SloReviewStudio from "@/src/components/SloReviewStudio";
 import CourseDesignWorkspace from "@/src/components/CourseDesignWorkspace";
 import CourseDesignStory from "@/src/components/CourseDesignStory";
+import CourseReview from "@/src/components/CourseReview";
 import type { ActivitySelection, Assessment, CourseRecord, RecommendationAnswers, SLO } from "@/src/types/course";
 
 const uid = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
@@ -27,7 +28,7 @@ const steps = ["Course", "SLO", "Assessment", "Activity", "Alignment"] as const;
 export default function CourseGuidePrototype() {
   const [course, setCourse] = useState<CourseRecord>(blankCourse);
   const [step, setStep] = useState(0);
-  const [view, setView] = useState<"landing" | "workspace" | "dashboard" | "context" | "outcomes" | "assessments" | "activities" | "alignment" | "story" | "activity-package" | "assignments" | "ai" | "quick-tools" | "slo-review">("landing");
+  const [view, setView] = useState<"landing" | "workspace" | "dashboard" | "review" | "context" | "outcomes" | "assessments" | "activities" | "alignment" | "story" | "activity-package" | "assignments" | "ai" | "quick-tools" | "slo-review">("landing");
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function CourseGuidePrototype() {
       </header>
 
       {view === "landing" ? <Landing hasWork={Boolean(course.title || course.materials.length || course.assignments.length)} onChoose={setView} /> : <><div className="app-layout">
-      <nav className="app-nav" aria-label="Course Guide sections"><span className="nav-label">Course workspace</span><button className={view === "dashboard" ? "nav-active" : ""} onClick={() => setView("dashboard")}>Dashboard</button><button className={view === "context" ? "nav-active" : ""} onClick={() => setView("context")}>Course context</button><button className={view === "outcomes" ? "nav-active" : ""} onClick={() => setView("outcomes")}>Outcomes</button><button className={view === "assessments" ? "nav-active" : ""} onClick={() => setView("assessments")}>Assessments</button><button className={view === "assignments" ? "nav-active" : ""} onClick={() => setView("assignments")}>Transparent design</button><button className={view === "activities" ? "nav-active" : ""} onClick={() => setView("activities")}>Learning experiences</button><button className={view === "alignment" ? "nav-active" : ""} onClick={() => setView("alignment")}>Alignment</button><button className={view === "story" ? "nav-active" : ""} onClick={() => setView("story")}>Design story</button><span className="nav-label nav-secondary">Tools</span><button className={view === "quick-tools" ? "nav-active" : ""} onClick={() => setView("quick-tools")}>Quick tools</button></nav>
+      <nav className="app-nav" aria-label="Course Guide sections"><span className="nav-label">Course workspace</span><button className={view === "dashboard" ? "nav-active" : ""} onClick={() => setView("dashboard")}>Dashboard</button><button className={view === "review" ? "nav-active" : ""} onClick={() => setView("review")}>Course review</button><button className={view === "context" ? "nav-active" : ""} onClick={() => setView("context")}>Course context</button><button className={view === "outcomes" ? "nav-active" : ""} onClick={() => setView("outcomes")}>Outcomes</button><button className={view === "assessments" ? "nav-active" : ""} onClick={() => setView("assessments")}>Assessments</button><button className={view === "assignments" ? "nav-active" : ""} onClick={() => setView("assignments")}>Transparent design</button><button className={view === "activities" ? "nav-active" : ""} onClick={() => setView("activities")}>Learning experiences</button><button className={view === "alignment" ? "nav-active" : ""} onClick={() => setView("alignment")}>Alignment</button><button className={view === "story" ? "nav-active" : ""} onClick={() => setView("story")}>Design story</button><span className="nav-label nav-secondary">Tools</span><button className={view === "quick-tools" ? "nav-active" : ""} onClick={() => setView("quick-tools")}>Quick tools</button></nav>
 
       <div className="app-content">
 
@@ -83,6 +84,7 @@ export default function CourseGuidePrototype() {
       <section className="workspace-card">
         {view === "workspace" && <>{step === 0 && <CourseStep course={course} setCourse={setCourse} onNext={() => setStep(1)} />}{step === 1 && <SloStep course={course} setCourse={setCourse} onBack={() => setStep(0)} onNext={() => setStep(2)} />}{step === 2 && <AssessmentStep course={course} setCourse={setCourse} slo={confirmedSlo} onBack={() => setStep(1)} onNext={() => setStep(3)} />}{step === 3 && <ActivityStep course={course} setCourse={setCourse} slo={confirmedSlo} assessment={linkedAssessment} onBack={() => setStep(2)} onNext={() => setStep(4)} />}{step === 4 && <AlignmentStep course={course} slo={confirmedSlo} assessment={linkedAssessment} activity={selectedActivity} onBack={() => setStep(3)} />}</>}
         {view === "dashboard" && <CourseDashboard course={course} setCourse={setCourse} onContinue={(nextStep) => { setStep(nextStep); setView("workspace"); }} onNavigate={(section) => setView(section)} />}
+        {view === "review" && <CourseReview course={course} setCourse={setCourse} onNavigate={(route) => setView(route)} />}
         {["context", "outcomes", "assessments", "activities", "alignment"].includes(view) && <CourseDesignWorkspace course={course} setCourse={setCourse} section={view as "context" | "outcomes" | "assessments" | "activities" | "alignment"} onNavigate={(section) => setView(section)} />}
         {view === "activity-package" && <ActivityPackageStudio course={course} setCourse={setCourse} />}
         {view === "assignments" && <AssignmentStudio course={course} setCourse={setCourse} onFindActivity={() => setView("activities")} />}

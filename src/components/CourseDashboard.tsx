@@ -12,7 +12,7 @@ import type { Assessment, CourseRecord, SLO } from "@/src/types/course";
 
 const uid = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
 
-export default function CourseDashboard({ course, setCourse, onContinue, onNavigate }: { course: CourseRecord; setCourse: (course: CourseRecord) => void; onContinue: (step: number) => void; onNavigate?: (section: "context" | "outcomes" | "assessments" | "activities" | "alignment" | "story" | "assignments" | "ai") => void }) {
+export default function CourseDashboard({ course, setCourse, onContinue, onNavigate }: { course: CourseRecord; setCourse: (course: CourseRecord) => void; onContinue: (step: number) => void; onNavigate?: (section: "context" | "outcomes" | "assessments" | "activities" | "alignment" | "story" | "assignments" | "ai" | "review") => void }) {
   const [sloText, setSloText] = useState("");
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentSlo, setAssessmentSlo] = useState("");
@@ -35,6 +35,7 @@ export default function CourseDashboard({ course, setCourse, onContinue, onNavig
       <StatusCard label="Learning experiences" value={course.activities.length ? `${course.activities.length} connected practice experience${course.activities.length === 1 ? "" : "s"}` : "Not started"} action={() => onNavigate ? onNavigate("activities") : onContinue(3)} />
       <StatusCard label="Alignment" value={issues.length ? `${issues.length} items to explore` : "Ready to explore"} action={() => onNavigate ? onNavigate("alignment") : onContinue(4)} />
       <StatusCard label="Design story" value={story.total ? `${story.total} decisions recorded` : "No decisions recorded yet"} action={() => onNavigate ? onNavigate("story") : onContinue(4)} />
+      <StatusCard label="Course review" value={course.courseReviewReflections?.filter((reflection) => reflection.response === "revisit").length ? `${course.courseReviewReflections.filter((reflection) => reflection.response === "revisit").length} area${course.courseReviewReflections.filter((reflection) => reflection.response === "revisit").length === 1 ? "" : "s"} to revisit` : "Choose a design focus"} action={() => onNavigate ? onNavigate("review") : onContinue(4)} />
       <StatusCard label="Transparent design" value={course.assignments.length ? "Assignment workspace ready" : "Review an assignment"} action={() => onNavigate ? onNavigate("assignments") : onContinue(4)} />
       <StatusCard label="Intentional AI" value={course.aiDecisions.length ? "Faculty decision recorded" : "Optional planning tool"} action={() => onNavigate ? onNavigate("ai") : onContinue(4)} />
     </section>

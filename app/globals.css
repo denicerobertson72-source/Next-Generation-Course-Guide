@@ -240,4 +240,6 @@ details p { line-height: 1.45; }
 .story-card p, .story-card small { color: var(--muted); }
 .story-card p { margin: 5px 0; }
 .pilot-feedback { margin-top: 20px; }
+.review-category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }.review-category { display: grid; gap: 14px; align-content: start; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: #fafbfb; }.review-category h3, .review-category h4 { margin: 3px 0 5px; }.review-category > div > p, .review-criterion > small { color: var(--muted); }.review-criterion { padding-top: 14px; border-top: 1px solid var(--line); }.review-evidence { padding: 10px 12px; border-left: 3px solid var(--gold); background: var(--white); }.review-evidence p { margin: 4px 0 0; color: var(--muted); }.review-response { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }.review-actions { margin-top: 10px; }.review-questions { margin-top: 10px; }.broader-review { margin-top: 24px; padding: 16px; }.broader-review > p { color: var(--muted); }
+@media (max-width: 900px) { .review-category-grid { grid-template-columns: 1fr; } }
 @media (max-width: 680px) { .alignment-matrix { display: block; overflow-x: auto; white-space: normal; } }
